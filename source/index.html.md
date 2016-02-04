@@ -2,9 +2,12 @@
 title: API Reference
 
 language_tabs:
-  - shell
-  - ruby
-  - python
+  - csharp
+  - javascript
+  - php
+  - perl
+  - vb
+  
 
 toc_footers:
   - <a href='#'>Sign Up for a Developer Key</a>
