@@ -99,7 +99,10 @@ $Result = $client->SendMessage($parameters);
 
 ```shell
 Simple HTTP GET:
-curl "http://smsgateway.ca/SendSMS.aspx?CellNumber=##########&AccountKey=accountKey&MessageBody=messageBody" 
+curl "http://smsgateway.ca/SendSMS.aspx?CellNumber=##########&AccountKey=accountKey&MessageBody=messageBody"
+
+HTTP POST:
+curl  
 ```
 
 Sends an SMS message to the given phone number. Returns 'Message queued successfully' on success, or an error message on fail.
