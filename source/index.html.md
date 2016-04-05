@@ -1,14 +1,15 @@
 ---
 title: API Reference
 language_tabs:
-  - csharp
+  - csharp : C#
   - javascript
+  - javascript : node.js 
   - php
   - perl
-  - vb
-  - http
+  - vb : vb.net
+  - shell: cURL
 toc_footers:
-  - "<a href='#'>Sign Up for a Developer Key</a>"
+  - "<a href='http://smsgateway.ca'>Sign up for an account</a>"
   - "<a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>"
 includes:
   - errors
@@ -94,6 +95,11 @@ $parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP
 
 $Result = $client->SendMessage($parameters);
 ?>
+```
+
+```shell
+Simple HTTP GET:
+curl "http://smsgateway.ca/SendSMS.aspx?CellNumber=##########&AccountKey=accountKey&MessageBody=messageBody" 
 ```
 
 Sends an SMS message to the given phone number. Returns 'Message queued successfully' on success, or an error message on fail.
