@@ -475,7 +475,7 @@ End Using
 Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account.  View your dedicated numbers in your control panel at [http://smsgateway.ca](http://smsgateway.ca)
 
 ### HTTP Request
-POST: /services/message.svc/{0}/{1}/ViaDedicated
+POST: /services/message.svc/:accountKey/:destinationNumber/ViaDedicated
 
 ### Returns
 `string`
@@ -641,16 +641,50 @@ $Result = $client->SendMessageWithPriority($parameters);
 ```
 
 ```shell
-
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/priority/[priority]" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\" }"
 ```
 
 ```vb
-  
+Enum Priorities
+    High = 1
+    Normal = 2
+    Low = 3
+End Enum
+Dim priority = Priorities.Normal
+
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessageWithPriority(destinationNumber, messageBody,
+                    accountKey, reference, Convert.ToInt32(priority))
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/priority/{2}",
+                        accountKey, destinationNumber, Convert.ToInt32(priority))
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                            "   ""Reference"" : ""{1}"", " & _
+                            "   ""SendingNumber"" : ""{2}"" }}",
+                            messageBody, reference, sendingNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+
+End Sub
 ```
 
 Sends an SMS message to the given phone number. Queue priority is set based on Priority parameter - 1 gives high priority, 2 is normal, 3 gives low priority. 
 
 Messages with a higher priority will be preferred over your normal messages. 
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/priority/:priority
 
 ### Returns
 `string`
@@ -662,9 +696,140 @@ See [SendMessage](#sendmessage)
 </aside>
 
 ## SendMessageWithPriorityExtended
+```csharp
+// Priority Enum
+private enum Priorities
+{
+    High = 1,
+    Normal = 2,
+    Low = 3
+}
+
+const Priorities priority = Priorities.Normal;
+
+// Service Reference / SOAP
+using (var client = new SwiftNew.SendSMSSoapClient())
+{
+    var response = client.SendMessageWithPriorityExtended(destinationNumber, messageBody, accountKey,
+        reference, (int)priority);
+
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = "Message Body";
+body.Reference = "Reference Number";
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/PriorityExtended/{2}", 
+    accountKey, destinationNumber, (int)priority);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    string response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+
+```javascript
+const HighPriority = 1;
+const NormalPriority = 2;
+const LowPriority = 3;
+
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber + "/PriorityExtended/" + NormalPriority;
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference Number"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+const HighPriority = 1;
+const NormalPriority = 2;
+const LowPriority = 3;
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $Priority;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> Priority = NormalPriority;
+
+$Result = $client->SendMessageWithPriorityExtended($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/PriorityExtended/[priority]" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\" }"
+```
+
+```vb
+Enum Priorities
+    High = 1
+    Normal = 2
+    Low = 3
+End Enum
+Dim priority = Priorities.Normal
+
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessageWithPriorityExtended(destinationNumber, messageBody,
+                    accountKey, reference, Convert.ToInt32(priority))
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/PriorityExtended/{2}",
+                        accountKey, destinationNumber, Convert.ToInt32(priority))
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                            "   ""Reference"" : ""{1}"", " & _
+                            "   ""SendingNumber"" : ""{2}"" }}",
+                            messageBody, reference, sendingNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+
+End Sub
+```
+
 Sends an SMS message to the given phone number. Queue priority is set based on Priority parameter - 1 gives high priority, 2 is normal, 3 gives low priority. 
 
 Messages with a higher priority will be preferred over your normal messages. 
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/PriorityExtended/:priority
 
 ### Returns
 `SMSSendMessageResponse`
