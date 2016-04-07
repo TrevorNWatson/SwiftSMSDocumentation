@@ -1,13 +1,12 @@
 ---
 title: API Reference
 language_tabs:
-  - csharp : C#
   - javascript
   - javascript : node.js 
   - php
-  - perl
   - vb : vb.net
   - shell: cURL
+  - csharp : C#
 toc_footers:
   - "<a href='http://smsgateway.ca'>Sign up for an account</a>"
   - "<a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>"
@@ -29,14 +28,14 @@ To use the Swift SMS Gateway API, please sign up for an account at [http://smsga
 ## SendMessage
 
 ```csharp
-// Service Reference
+// Service Reference / SOAP
 using (var client = new SwiftSMS.SendSMSSoapClient())
 {
-  string messageResponse = client.SendMessage(cellNumber,
+  string response = client.SendMessage(destinationNumber,
     messageBody, accountKey);
 }
 
-// Web Client
+// Web Client / REST
 dynamic body = new ExpandoObject();
 body.MessageBody = "Message Body";
 body.Reference = "Reference Number";
@@ -49,7 +48,7 @@ using (var wClient = new System.Net.WebClient())
     wClient.Encoding = Encoding.UTF8;
     wClient.Headers.Add("content-type", "application/json");
 
-    string messageResponse = wClient.UploadString(url,
+    string response = wClient.UploadString(url,
       Newtonsoft.Json.JsonConvert.SerializeObject(body));
 
 }
@@ -59,7 +58,7 @@ using (var wClient = new System.Net.WebClient())
 ```javascript
 // uses JQuery library
 var postUrl = "http://smsgateway.ca/services/message.svc/"
-  + accountKey + "/" + cellNumber
+  + accountKey + "/" + destinationNumber
 var body = JSON.stringify({
   MessageBody: "Message Body",
   Reference: "Reference Number"
@@ -89,7 +88,7 @@ class SMSParam {
 $client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
 $parameters = new SMSParam;
 
-$parameters -> CellNumber = cellNumber;
+$parameters -> CellNumber = destinationNumber;
 $parameters -> AccountKey = accountKey;
 $parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
 
@@ -99,10 +98,30 @@ $Result = $client->SendMessage($parameters);
 
 ```shell
 Simple HTTP GET:
-curl "http://smsgateway.ca/SendSMS.aspx?CellNumber=##########&AccountKey=accountKey&MessageBody=messageBody"
+curl "http://smsgateway.ca/SendSMS.aspx?CellNumber=[destinationNumber]&AccountKey=[accountKey]&MessageBody=[messageBody]"
 
 HTTP POST:
-curl  
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+'Using Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessage(destinationNumber, messageBody, accountKey)
+End Using
+
+'Using Webclient (REST)    
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}", accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", ""Reference"" : ""{1}"" }}", messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
 ```
 
 Sends an SMS message to the given phone number. Returns 'Message queued successfully' on success, or an error message on fail.
@@ -115,8 +134,8 @@ Parameter|Description|Location
 ------|------|-----
 accountKey|Your Swift SMS Gateway account key|URL
 destinationNumber|Cell number to receive the text message|URL
-MessageBody|Body of the message to send|BODY
-Reference|Internal reference number|BODY
+messageBody|Body of the message to send|BODY
+reference|Internal reference number|BODY
 
 ### Returns
 `string`
@@ -127,15 +146,335 @@ Message queued successfully|Your message has been queued and will be sent
 Account key was not found|Your account key was missing - Message will not be sent
 Credit rule not found|You attempted to send a message to a region you do not have permission to.  Please contact your account manager to check regions. - Message will not be sent
 Insufficient Credits|You do not have enough credits to send this message - Message will not be sent
+Message body was missing|Your message contained no content to send - Message will not be sent
 
 ## SendMessageExtended
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftNew.SendSMSSoapClient())
+{
+    var response = client.SendMessageExtended(destinationNumber, messageBody, accountKey);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = "Message Body";
+body.Reference = "Reference Number";
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/Extended", 
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    string response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+    + accountKey + "/" + destinationNumber + "/Extended"
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference Number"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+
+$Result = $client->SendMessageExtended($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/Extended" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessageExtended(destinationNumber, messageBody, accountKey)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/Extended",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", ""Reference"" : ""{1}"" }}",
+                            messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
 Sends an SMS message to the given phone number. Returns an instance of an SMSSendMessageResponse
 
+### HTTP Request
+POST: http://smsgateway.ca/services/message.svc/:accountKey/:destinationNumber/Extended 
+
+### Returns
+`SMSSendMessageResponse`
+
+Field|Type|Description
+-----|-----|-----
+ErrorMessage|string|Empty if successful, description (see [SendMessage](#sendmessage)) if failure
+MessageID|long|Unique Message ID of queued message
+MessagesRemaining|int|Credits remaining on your account
+QueuedSuccessfully|boolean|True if message was queued
+
+
 ## SendMessageMultiRoute
-Sends an SMS message to the given phone number using two upstream routes to maximize chances for delivery of extremely high priority messages. Returns 'Message queued successfully' on success, or an error message on fail.
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+  string response = client.SendMessageMultiRoute(destinationNumber,
+    messageBody, accountKey);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = "Message Body";
+body.Reference = "Reference Number";
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/Multi",
+  accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    string response = wClient.UploadString(url,
+      Newtonsoft.Json.JsonConvert.SerializeObject(body));
+
+}
+```
+
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber + "/Multi";
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference Number"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+
+$Result = $client->SendMessageMultiRoute($parameters);
+?>
+```
+
+```shell
+
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/ViaDedicated" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+'Using Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessageMultiRoute(destinationNumber, messageBody, accountKey)
+End Using
+
+'Using Webclient (REST)    
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/Multi", accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", ""Reference"" : ""{1}"" }}", messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Sends an SMS message to the given phone number using two upstream routes to maximize chances for delivery of extremely high priority messages.
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
 
 ## SendMessageViaDedicatedNumber
-Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account. Returns 'Message queued successfully' on success, or an error message on fail.
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftNew.SendSMSSoapClient())
+{
+    var response = client.SendMessageViaDedicatedNumber(destinationNumber, messageBody, accountKey,
+        reference, sendingNumber);
+
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = "Message Body";
+body.Reference = "Reference Number";
+body.SenderNumber = sendingNumber;
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/ViaDedicated", 
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    string response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber + "/ViaDedicated";
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference Number",
+  SendingNumber: "[sendingNumber]"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $SendingNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> SendingNumber = sendingNumber;
+
+$Result = $client->SendMessageViaDedicatedNumber($parameters);
+?>
+
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/ViaDedicated" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\", \"SendingNumber\", \"[sendingNumber]\"}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessageViaDedicatedNumber(destinationNumber, messageBody,
+                    accountKey, reference, sendingNumber)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/ViaDedicated",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                         "   ""Reference"" : ""{1}"", " & _
+                         "   ""SendingNumber"" : ""{2}"" }}",
+                         messageBody, reference, sendingNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account.  View your dedicated numbers in your control panel at [http://smsgateway.ca](http://smsgateway.ca)
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
 
 ## SendMessageViaDedicatedNumberExtended
 Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account. Returns 'Message queued successfully' on success, or an error message on fail.
