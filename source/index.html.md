@@ -247,7 +247,7 @@ End Using
 Sends an SMS message to the given phone number. Returns an instance of an SMSSendMessageResponse
 
 ### HTTP Request
-POST: http://smsgateway.ca/services/message.svc/:accountKey/:destinationNumber/Extended 
+POST: /services/message.svc/:accountKey/:destinationNumber/Extended 
 
 ### Returns
 `SMSSendMessageResponse`
@@ -358,6 +358,9 @@ End Using
 ```
 
 Sends an SMS message to the given phone number using two upstream routes to maximize chances for delivery of extremely high priority messages.
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/Multi 
 
 ### Returns
 `string`
@@ -471,22 +474,203 @@ End Using
 
 Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account.  View your dedicated numbers in your control panel at [http://smsgateway.ca](http://smsgateway.ca)
 
+### HTTP Request
+POST: /services/message.svc/{0}/{1}/ViaDedicated
+
 ### Returns
 `string`
 
 See [SendMessage](#sendmessage)
 
 ## SendMessageViaDedicatedNumberExtended
-Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account. Returns 'Message queued successfully' on success, or an error message on fail.
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftNew.SendSMSSoapClient())
+{
+    var response = client.SendMessageViaDedicatedNumberExtended(destinationNumber, messageBody, accountKey,
+        reference, sendingNumber);
+
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+
+```javascript
+// uses JQuery library
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $SendingNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> SendingNumber = sendingNumber;
+
+$Result = $client->SendMessageViaDedicatedNumberExtended($parameters);
+?>
+
+```
+
+```shell
+HTTP POST:
+### NOT CURRENTLY AVAILABLE ###
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMessageViaDedicatedNumberExtended(destinationNumber, messageBody,
+                    accountKey, reference, sendingNumber)
+End Using
+
+' WebClient (REST)
+'** NOT CURRENTLY AVAILABLE **'
+```
+
+Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account.
+
+### Returns
+`SMSSendMessageResponse`
+
+See [SendMessageExtended](#sendmessageextended)
 
 ## SendMessageWithPriority
-Sends an SMS message to the given phone number. Queue priority is set based on Priority parameter - 1 gives high priority, 2 is normal, 3 gives low priority. Returns 'Message queued successfully' on success, or an error message on fail.
+```csharp
+// Priority Enum
+private enum Priorities
+{
+    High = 1,
+    Normal = 2,
+    Low = 3
+}
+
+const Priorities priority = Priorities.Normal;
+
+// Service Reference / SOAP
+using (var client = new SwiftNew.SendSMSSoapClient())
+{
+    var response = client.SendMessageWithPriority(destinationNumber, messageBody, accountKey,
+        reference, (int)priority);
+
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = "Message Body";
+body.Reference = "Reference Number";
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/priority/{2}", 
+    accountKey, destinationNumber, (int)priority);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    string response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+
+```javascript
+const HighPriority = 1;
+const NormalPriority = 2;
+const LowPriority = 3;
+
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber + "/priority/" + NormalPriority;
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference Number"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+const HighPriority = 1;
+const NormalPriority = 2;
+const LowPriority = 3;
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $Priority;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> Priority = NormalPriority;
+
+$Result = $client->SendMessageWithPriority($parameters);
+?>
+```
+
+```shell
+
+```
+
+```vb
+  
+```
+
+Sends an SMS message to the given phone number. Queue priority is set based on Priority parameter - 1 gives high priority, 2 is normal, 3 gives low priority. 
+
+Messages with a higher priority will be preferred over your normal messages. 
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
+
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
 
 ## SendMessageWithPriorityExtended
-Sends an SMS message to the given phone number. Queue priority is set based on Priority parameter - 1 gives high priority, 2 is normal, 3 gives low priority. Returns an instance of an SMSSendMessageResponse
+Sends an SMS message to the given phone number. Queue priority is set based on Priority parameter - 1 gives high priority, 2 is normal, 3 gives low priority. 
+
+Messages with a higher priority will be preferred over your normal messages. 
+
+### Returns
+`SMSSendMessageResponse`
+
+See [SendMessageExtended](#sendmessageextended)
+
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
