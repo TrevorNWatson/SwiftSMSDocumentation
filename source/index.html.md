@@ -127,13 +127,15 @@ Sends an SMS message to the given phone number. Returns 'Message queued successf
 ### HTTP Request
 **POST :** `/services/message.svc/:accountKey/:destinationNumber`
 
+**GET :** `/SendSMS.aspx?CellNumber=[destinationNumber]&AccountKey=[accountKey]&MessageBody=[messageBody]`
+
 
 Parameter|Description|Location
 ------|------|-----
 accountKey|Your Swift SMS Gateway account key|URL
 destinationNumber|Cell number to receive the text message|URL
 messageBody|Body of the message to send|BODY
-reference|Internal reference number|BODY
+
 
 ### Returns
 `string`
@@ -247,6 +249,13 @@ Sends an SMS message to the given phone number. Returns an instance of an SMSSen
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber/Extended 
 
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+
 ### Returns
 `SMSSendMessageResponse`
 
@@ -359,6 +368,13 @@ Sends an SMS message to the given phone number using two upstream routes to maxi
 
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber/Multi 
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -475,6 +491,14 @@ Sends an SMS message to the given phone number from the specified sender number.
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber/ViaDedicated
 
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+sendingNumber|Sender ID (Long code number) to send the message via|BODY
+
 ### Returns
 `string`
 
@@ -542,6 +566,15 @@ End Using
 ```
 
 Sends an SMS message to the given phone number from the specified sender number. The SenderNumber must be a dedicated longcode associated with your account.
+
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+sendingNumber|Sender ID (Long code number) to send the message via|BODY
 
 ### Returns
 `SMSSendMessageResponse`
@@ -683,6 +716,14 @@ Messages with a higher priority will be preferred over your normal messages.
 
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber/priority/:priority
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+prority|Priority of message.  1 = High  2 = Normal  3 = Low|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -829,6 +870,15 @@ Messages with a higher priority will be preferred over your normal messages.
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber/PriorityExtended/:priority
 
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+prority|Priority of message.  1 = High  2 = Normal  3 = Low|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+
+
 ### Returns
 `SMSSendMessageResponse`
 
@@ -931,7 +981,7 @@ End Using
 Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}",
                         accountKey, destinationNumber)
 Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
-                            "   ""Reference"" : ""{1}"" }}",
+                         "   ""Reference"" : ""{1}"" }}",
                             messageBody, reference)
 
 Using wClient = New Net.WebClient
@@ -946,6 +996,13 @@ Sends an SMS message to the given phone number. Allows adding a "Reference" whic
 
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -1062,6 +1119,13 @@ Sends an SMS message to the given phone number.  Allows adding a "Reference" whi
 ### HTTP Request
 POST: /services/message.svc/:accountKey/:destinationNumber/Extended
 
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+
 ### Returns
 `SMSSendMessageResponse`
 
@@ -1121,7 +1185,7 @@ HTTP POST:
 ' Service Reference (SOAP)
 Using client = New SwiftSMS.SendSMSSoapClient
     Dim response = client.SendMultiMessageWithReference(destinationNumber, messageBody,
-                    accountKey, reference, sendingNumber)
+                    accountKey, reference)
 End Using
 
 ' WebClient (REST)
@@ -1129,6 +1193,13 @@ End Using
 ```
 
 Sends an SMS message to the given phone number using two upsteam routes to maximize chances for delivery of extremely high priority messages.
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
