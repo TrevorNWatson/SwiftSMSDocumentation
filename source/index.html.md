@@ -143,10 +143,17 @@ messageBody|Body of the message to send|BODY
 Response|Description
 -----|-----
 Message queued successfully|Your message has been queued and will be sent
-Account key was not found|Your account key was missing - Message will not be sent
+Cell number is invalid|The cell number was not supplied or was too short.
+Message body was missing|No message was supplied. We do not permit sending blank SMS messages.
+The account key parameter was not valid|The account key was not supplied or or was less than 9 characters.
+This account is disabled|The specified account has been disabled by our administrator for violating one or more of our policies.
+Account key not found|The specified account key cannot be found. Please verify the key and try again.
+There are no messages remaining on this account|You will need to purchase additional messages.
+No authorized credit plan found to match this phone number. Please check the number, and ensure you are authorized to send messages to this region|By default, accounts are authorized to send to certain countries only. Please contact us to find out how to send to other regions.
 Credit rule not found|You attempted to send a message to a region you do not have permission to.  Please contact your account manager to check regions. - Message will not be sent
-Insufficient Credits|You do not have enough credits to send this message - Message will not be sent
-Message body was missing|Your message contained no content to send - Message will not be sent
+Message content is not acceptable, message not sent|Please contact us for details
+Time of day at destination falls outside the established time restrictions for your account, message not sent.|For Enterprise level accounts only - optional time-of-day windows can be created to restrict sending.
+
 
 ## SendMessageExtended
 ```csharp
@@ -1209,31 +1216,735 @@ See [SendMessage](#sendmessage)
 # Sending Unicode SMS Messages
 
 ## SendUnicodeMessage
-Sends an SMS message containing Unicode characters to the given phone number. Limit of 70 characters per message. Useful for sending accented characters. Returns 'Message queued successfully' on success, or an error message on fail.
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendUnicodeMessage(destinationNumber,
+        messageBody, accountKey, reference);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = messageBody;
+body.Reference = reference;
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/Unicode",
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    var response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber = "/Unicode";
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> AccountKey = reference;
+
+$Result = $client->SendUnicodeMessage($parameters);
+?>
+
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/Unicode" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendUnicodeMessage(destinationNumber, messageBody,
+                    accountKey, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/Unicode",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                            "   ""Reference"" : ""{1}"" }}",
+                            messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Sends an SMS message containing Unicode characters to the given phone number. Limit of 70 characters per message. Useful for sending accented characters.
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/Unicode 
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
 
 ## SendUnicodeMessageExtended
-Sends an SMS message to the given phone number. Returns an instance of an SMSSendMessageResponse
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendUnicodeMessageExtended(destinationNumber,
+        messageBody, accountKey, reference);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = messageBody;
+body.Reference = reference;
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/UnicodeExtended",
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    var response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber = "/UnicodeExtended";
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> AccountKey = reference;
+
+$Result = $client->SendUnicodeMessageExtended($parameters);
+?>
+
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/UnicodeExtended" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendUnicodeMessageExtended(destinationNumber, messageBody,
+                    accountKey, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/UnicodeExtended",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                            "   ""Reference"" : ""{1}"" }}",
+                            messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Sends an SMS message containing Unicode characters to the given phone number. Limit of 70 characters per message. Useful for sending accented characters. 
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/UnicodeExtended
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+
+### Returns
+`SMSSendMessageResponse`
+
+See [SendMessageExtended](#sendmessageextended)
+
 
 ## SendUnicodeMessageMulti
-Sends an SMS message to the given phone number using two upsteam routes to maximize chances for delivery of extremely high priority messages.
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendUnicodeMessageMulti(destinationNumber,
+        messageBody, accountKey, reference);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = messageBody;
+body.Reference = reference;
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/MultiUnicode",
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    var response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber = "/MultiUnicode";
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> AccountKey = reference;
+
+$Result = $client->SendUnicodeMessageMulti($parameters);
+?>
+
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/MultiUnicode" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendUnicodeMessageMulti(destinationNumber, messageBody,
+                    accountKey, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/MultiUnicode",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                            "   ""Reference"" : ""{1}"" }}",
+                            messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Sends a Unicode SMS message to the given phone number using two upsteam routes to maximize chances for delivery of extremely high priority messages.
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/MultiUnicode 
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
+
 
 # Sending a MMS
 
 ## SendMultimediaMessage
-Sends an MMS message to the given phone number. Returns 'Message queued successfully' on success, or an error message on fail.
 
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = var response = client.SendMultimediaMessage(destinationNumber,
+        "http://location.of/mms_image.jpg", accountKey);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.URLOfContent = "http://location.of/mms_image.jpg";
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/MMS",
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    var response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/" + destinationNumber = "/MMS";
+var body = JSON.stringify({
+    URLOfContent = "http://location.of/mms_image.jpg"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $URLOfContent;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> URLOfContent = "http://location.of/mms_image.jpg";
+
+$Result = $client->SendMultimediaMessage($parameters);
+?>
+
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/[destination]/MMS" \
+     --data "{ \"URLOfContent\": \"http://location.of/mms_image.jpg\" }"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendMultimediaMessage(destinationNumber,
+        "http://location.of/mms_image.jpg", accountKey)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/{1}/MMS",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""URLOfContent"": ""http://location.of/mms_image.jpg"" }}")
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+An MMS message is a multimedia message such as an image, video or audio file. If the recipient's phone supports MMS, this rich content will appear in line with other text messages.
+
+For us to send MMS, the content must be hosted on the Internet and you must supply a URL to retrieve the content. If you have an image you want to send but it's not currently hosted on the Internet, we can host the image for you prior to sending. [Click here for more details](http://smsgateway.ca/Instructions/MediaUploading.aspx). Please confirm the validity of the content before sending. If the content cannot be downloaded, the recipient will not receive the message. We are unable to determine this upon sending and will still need to charge for the message. 
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/:destinationNumber/MMS 
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+destinationNumber|Cell number to receive the text message|URL
+URLOfContent|Fully qualified URL to the image to send via MMS|BODY
+
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
+
+This method may also return
+
+Response|Description
+-----|-----
+Cannot send MMS outside Canada and US|At this time, we only support sending MMS to Canada and the United States
 
 # Bulk SMS Sending
 
 ## SendBulkMessage
+
+```csharp
+// Create an "ArrayOfString" object with the numbers to receive the SMS message
+var numbers = new SwiftSMS.ArrayOfString { destinationNumber };
+ 
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendBulkMessage(accountKey, messageBody, reference, numbers);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = messageBody;
+body.Reference = reference;
+body.CellNumbers = numbers;
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/Bulk",
+    accountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    var response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/Bulk";
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference Number",
+  CellNumbers: [destinationNumber, destinationNumber, ...]
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+    public $CellNumbers;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> Reference = reference;
+$parameters -> CellNumber = (destinationNumber, destinationNumber, ...);
+
+$Result = $client->SendBulkMessage($parameters);
+?>
+```
+
+```shell
+
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/[accountKey]/Bulk" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\", \"CellNumbers\": [\"destinationNumber\", ...]}"
+```
+
+```vb
+Dim numbers = New ArrayOfString()
+numbers.Add(destinationNumber)
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendBulkMessage(accountKey, messageBody, reference, numbers)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/Bulk",
+                        accountKey)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                            "   ""Reference"" : ""{1}"", " & _
+                            "   ""CellNumbers"": [" & _
+                                """" & destinationNumber & """, " & _
+                                """" & destinationNumber & """, " & _
+                                "..." & "] " & _
+                            "}}",
+                            messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
 Sends an SMS message to all the cell numbers provided. Returns the number of messages successfully queued, or an error message on failure.
+
+### HTTP Request
+POST: /services/message.svc/:accountKey/Bulk 
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
+
+### Returns
+`string`
+
+If successful, will return "x messages queued successfully"
+
+If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
+
+
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
 
 ## SendBulkMessageWithOptions
-Sends an SMS message to all the cell numbers provided. Supported options are the following MsgContentType=Unicode | Ascii, AllowMessageSplit=True | False (Ascii and False being default if no arguments are passed), SenderID=. Returns the number of messages successfully queued, or an error message on failure.
+
+```csharp
+// Create an "ArrayOfString" object with the numbers to receive the SMS message
+var numbers = new SwiftSMS.ArrayOfString { destinationNumber };
+var options = new SwiftSMS.ArrayOfString { "MsgContentType=Unicode", "SenderId=" + sendingNumber }
+ 
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendBulkMessageWithOptions(accountKey, messageBody, reference, numbers, options);
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+
+```javascript
+// uses JQuery library
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+    public $CellNumbers;
+    public $Options;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> Reference = reference;
+$parameters -> CellNumber = (destinationNumber, destinationNumber, ...);
+$parameters -> Options = ("MsgContentType=Unicode", "SenderId=" + sendingNumber);
+
+$Result = $client->SendBulkMessageWithOptions($parameters);
+?>
+```
+
+```shell
+
+HTTP POST:
+# NOT CURRENTLY AVAILABLE #
+```
+
+```vb
+Dim numbers = New ArrayOfString()
+numbers.Add(destinationNumber)
+
+Dim options = new ArrayOfString()
+options.Add("MsgContentType=ASCII")
+options.Add("SenderId=" & sendingNumber)
+
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendBulkMessage(accountKey, messageBody, reference, numbers, options)
+End Using
+
+' WebClient (REST)
+'** NOT CURRENTLY AVAILABLE **
+```
+
+Sends an SMS message to all the cell numbers provided. Returns the number of messages successfully queued, or an error message on failure.
+
+
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+messageBody|Body of the message to send|BODY
+reference|Internal Reference ID|BODY
+CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
+Options|Array of strings with each containing [key]=[value]|BODY
+
+
+### Options
+Parameter|Value|Description|Is Default
+-----|-----|-----|-----
+MsgContentType| |Send message as ASCII or Unicode| 
+ |Unicode|Send Unicode Message (allowing the extended character set|
+ |ASCII|Send messages using only ASCII characters|Yes
+
+Parameter|Value|Description|Is Default
+-----|-----|-----|-----
+SenderId| |Phone number of dedicated long code to send your messages from|
+
+Parameter|Value|Description|Is Default
+-----|-----|-----|-----
+Reference2| |Secondary Reference field.|
+ | |If this is an email address, any replies will be send to this address.  This OVERRIDES account settings
+
+
+### Returns
+`string`
+
+If successful, will return "x messages queued successfully"
+
+If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
+
+
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
