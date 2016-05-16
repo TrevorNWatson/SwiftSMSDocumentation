@@ -2031,21 +2031,281 @@ If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
 </aside>
 
 ## SendDistinctBulkMessages
-Sends distinct SMS messages to all the cell numbers provided. Returns the number of messages successfully queued, or an error message on failure.
+```csharp
+var numbers = new SwiftSMS.ArrayOfString { destinationNumber, destinationNumber };
+var messageBodies = new SwiftSMS.ArrayOfString {"Message to recipient 1", "Message to recipient 2"};
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendDistinctBulkMessages(accountKey, messageBody, numbers, messageBodies);
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+
+```javascript
+// uses JQuery library
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $Reference;
+    public $CellNumbers;
+    public $MessageBodies;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> Reference = reference;
+$parameters -> CellNumber = (destinationNumber, destinationNumber, ...);
+$parameters -> MessageBodies = ("Message to first recipient", "Message to second recipient", ...);
+
+$Result = $client->SendDistinctBulkMessages($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+# NOT CURRENTLY AVAILABLE #
+```
+
+```vb
+Dim numbers = New ArrayOfString()
+numbers.Add(destinationNumber)
+numbers.Add(destinationNumber)
+Dim messageBodies = New ArrayOfString()
+messageBodies.Add("Message to first recipient")
+messageBodies.Add("Message to second recipient")
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendDistinctBulkMessages(accountKey, reference, numbers, messageBodies)
+End Using
+
+' WebClient (REST)
+' NOT CURRENTLY AVAILABLE
+```
+
+Sends a unique SMS message to each cell numbers provided. Returns the number of messages successfully queued, or an error message on failure.
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|BODY
+Reference|Internal Reference ID|BODY
+CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
+MessageBodies|Array of messages to deliver to the recipients.  Must have the same number of elements as CellNumbers|BODY
+
+### Returns
+`string`
+
+If successful, will return "x messages queued successfully"
+
+If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
+
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
 
 ## SendDistinctBulkMessagesViaDedicatedNumber
-Sends distinct SMS messages to all the cell numbers provided from the dedicated numbers requested. Returns the number of messages successfully queued, or an error message on failure.
+```csharp
+var numbers = new SwiftSMS.ArrayOfString { destinationNumber, destinationNumber };
+var messageBodies = new SwiftSMS.ArrayOfString {"Message to recipient 1", "Message to recipient 2"};
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendDistinctBulkMessagesViaDedicatedNumber(accountKey, messageBody, 
+        senderNumber, numbers, messageBodies);
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+
+```javascript
+// uses JQuery library
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $Reference;
+    public $SenderNumber;
+    public $CellNumbers;
+    public $MessageBodies;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> Reference = reference;
+$parameters -> SenderNumber = senderNumber;
+$parameters -> CellNumber = (destinationNumber, destinationNumber, ...);
+$parameters -> MessageBodies = ("Message to first recipient", "Message to second recipient", ...);
+
+$Result = $client->SendDistinctBulkMessagesViaDedicatedNumber($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+# NOT CURRENTLY AVAILABLE #
+```
+
+```vb
+Dim numbers = New ArrayOfString()
+numbers.Add(destinationNumber)
+numbers.Add(destinationNumber)
+Dim messageBodies = New ArrayOfString()
+messageBodies.Add("Message to first recipient")
+messageBodies.Add("Message to second recipient")
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendDistinctBulkMessagesViaDedicatedNumber(accountKey, _
+        reference, senderNumber, numbers, messageBodies)
+End Using
+
+' WebClient (REST)
+' NOT CURRENTLY AVAILABLE
+```
+
+Sends a unique SMS message to each cell numbers provided via the given dedicated number. Returns the number of messages successfully queued, or an error message on failure.
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|BODY
+Reference|Internal Reference ID|BODY
+SenderNumber|Dedicated number to deliver the given messages|BODY
+CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
+MessageBodies|Array of messages to deliver to the recipients.  Must have the same number of elements as CellNumbers|BODY
+
+### Returns
+`string`
+
+If successful, will return "x messages queued successfully"
+
+If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
 
 ## SendTemplatedBulkMessageWithOptions
- Sends an SMS message to all the cell numbers provided. Message can contain parameters arrays in a format (eg. <1>, or <2>). Args is an array of arrays with each row having the same number of columns as cell numbers. Supported options are the following MsgContentType=Unicode | Ascii, AllowMessageSplit=True | False (Ascii and False being default if no arguments are passed). Returns the number of messages successfully queued, or an error message on failure.
+```csharp
+var numbers = new SwiftSMS.ArrayOfString { destinationNumber, destinationNumber };
+
+var options = new SwiftSMS.ArrayOfString { "MsgContentType=Unicode", "SenderID=" + senderNumber };
+var templateBody = "Hello <1>, you have an appointment at <2>";
+SwiftSMS.ArrayOfString[] args = new ArrayOfString[2];
+args[0] = new ArrayOfString {"John", "10:30am"};
+args[0] = new ArrayOfString {"Linda", "3:45am"};
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendTemplatedBulkMessageWithOptions(accountKey,
+        templateBody, reference, numbers, args, options);
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+
+```javascript
+// uses JQuery library
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+    /** Please contact support@swiftsmsgateway.com for sample **/
+?>
+```
+
+```shell
+HTTP POST:
+# NOT CURRENTLY AVAILABLE #
+```
+
+```vb
+Const templateBody As String = "Hello <1>, you have an appointment at <2>"
+
+Dim numbers = New ArrayOfString()
+numbers.AddRange({destinationNumber, destinationNumber})
+
+Dim args(2) As ArrayOfString
+args(0) = New ArrayOfString()
+args(0).AddRange({"John", "10:30am"})
+args(1).AddRange({"Linda", "3:45pm"})
+
+Dim options = New ArrayOfString()
+options.Add("MsgContentType=ASCII")
+options.Add("SenderId=" & senderNumber)
+
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendTemplatedBulkMessageWithOptions(accountKey, _
+        templateBody, reference, numbers, args, options)
+End Using
+
+' WebClient (REST)
+' NOT CURRENTLY AVAILABLE
+```
+
+Sends an SMS message to all the cell numbers provided. Message can contain parameters arrays in a format (eg. <1>, or <2>). 
+Args is an array of arrays with each row having the same number of columns as cell numbers. 
+Supported options are the following MsgContentType=Unicode | Ascii.
+
+
+Returns the number of messages successfully queued, or an error message on failure.
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|BODY
+Reference|Internal Reference ID|BODY
+TemplateBody|The template to use when sending the message.  Using <1>, <2>, etc in the template will use values from Args|BODY
+CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
+Args|Array of ArrayOfString objects with values for the parameters in the template body|BODY
+Options|Array of strings with each containing [key]=[value]|BODY
+
+
+### Options
+Parameter|Value|Description|Is Default
+-----|-----|-----|-----
+MsgContentType| |Send message as ASCII or Unicode| 
+ |Unicode|Send Unicode Message (allowing the extended character set|
+ |ASCII|Send messages using only ASCII characters|Yes
+
+Parameter|Value|Description|Is Default
+-----|-----|-----|-----
+SenderId| |Phone number of dedicated long code to send your messages from|
+
+Parameter|Value|Description|Is Default
+-----|-----|-----|-----
+Reference2| |Secondary Reference field.|
+ | |If this is an email address, any replies will be send to this address.  This OVERRIDES account settings
+
+### Returns
+`string`
+
+If successful, will return "x messages queued successfully"
+
+If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
+
 
  <aside class="notice">
   Available only on our API 2 and API 3 Plans.
