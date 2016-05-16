@@ -2250,6 +2250,7 @@ numbers.AddRange({destinationNumber, destinationNumber})
 Dim args(2) As ArrayOfString
 args(0) = New ArrayOfString()
 args(0).AddRange({"John", "10:30am"})
+args(1) = New ArrayOfString()
 args(1).AddRange({"Linda", "3:45pm"})
 
 Dim options = New ArrayOfString()
@@ -2314,22 +2315,604 @@ If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
 # Retrieve Incoming Messages
 
 ## GetIncomingMessages
-Get a list of incoming messages
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var incomingMessages = client.GetIncomingMessages(accountKey, messageCount);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+
+var url = string.Format("http://smsgateway.ca/services/incoming.svc/{0}/count/{1}",
+    accountKey, messageCount);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var response = wClient.DownloadString(url);
+}
+```
+
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/incoming.svc/"
+  + accountKey + "/count/" + messageCount
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageCount;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageCount = 5;
+
+
+$Result = $client->GetIncomingMessages($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/count/[messageCount]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetIncomingMessages(accountKey, messageCount)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/incoming.svc/{0}/count/{1}",
+                        accountKey, messageCount)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
+Get a list of the most recent incoming messages.
+
+
+### HTTP Request
+**GET :** /services/incoming.svc/:accountKey/count/:messageCount
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageCount|The number of messages to retrieve|URL
+
+### Returns
+Array of [SMSIncomingMessage](#smsincomingmessage)
+
 
 ## GetIncomingMessagesAfterID
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var incomingMessages = client.GetIncomingMessagesAfterID(accountKey, messageNumber);
+
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/incoming.svc/{0}/afterId/{1}",
+    accountKey, messageNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var response = wClient.DownloadString(url);
+}
+```
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/incoming.svc/"
+  + accountKey + "/afterId/" + messageNumber
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageNumber = 5;
+
+
+$Result = $client->GetIncomingMessagesAfterID($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/afterId/[messageNumber]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetIncomingMessagesAfterID(accountKey, messageNumber)
+End Using
+
+Dim numberList = "[""" & String.Join(""", """, numbers) & """]"
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/incoming.svc/{0}/afterId/{1}",
+                        accountKey, messageNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get a list of incoming messages which arrived after the message with the given ID.
 
+
+### HTTP Request
+**GET :** /services/incoming.svc/:accountKey/afterId/:messageNumber
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageNumber|The ID of message to retrieve incoming messages after|URL
+
+### Returns
+Array of [SMSIncomingMessage](#smsincomingmessage)
+
 ## GetIncomingMessagesAfterIDExtended
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var incomingMessages = client.GetIncomingMessagesAfterIDExtended(accountKey, messageNumber);
+
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/incoming.svc/{0}/afterIdExtended/{1}",
+    accountKey, messageNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var response = wClient.DownloadString(url);
+}
+```
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/incoming.svc/"
+  + accountKey + "/afterIdExtended/" + messageNumber
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageNumber = 5;
+
+
+$Result = $client->GetIncomingMessagesAfterIDExtended($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/afterIdExtended/[messageNumber]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetIncomingMessagesAfterIDExtended(accountKey, messageNumber)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/incoming.svc/{0}/afterIdExtended/{1}",
+                        accountKey, messageNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get a list of incoming messages which arrived after the message with the given ID. Includes destination phone number.
 
+
+### HTTP Request
+**GET :** /services/incoming.svc/:accountKey/afterIdExtended/:messageNumber
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageNumber|The ID of message to retrieve incoming messages after|URL
+
+### Returns
+Array of [SMSIncomingMessageFull](#smsincomingmessagefull)
+
+
 ## GetIncomingMessagesByReference
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var incomingMessages = client.GetIncomingMessagesByReference(accountKey, messageCount, reference);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+
+var url = string.Format("http://smsgateway.ca/services/incoming.svc/{0}/reference/{1}/count/{2}",
+    accountKey, HttpUtility.UrlEncode(reference), messageCount);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var response = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/incoming.svc/"
+  + accountKey + "/reference/" + reference + "/count/" + messageCount
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $Reference;
+    public $MessageCount;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageCount = 5;
+
+
+$Result = $client->GetIncomingMessagesByReference($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/reference/[reference]/count/[messageCount]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetIncomingMessagesByReference(accountKey, messageCount, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/incoming.svc/{0}/reference/{1}/count/{2}",
+                        accountKey, HttpUtility.UrlEncode(reference), messageCount)
+
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get a list of incoming messages which match the given reference
 
+
+### HTTP Request
+**GET :** /services/incoming.svc/:accountKey/reference/:reference/count/:messageCount
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+Reference|The reference of sent messages to retrieve replies to|URL
+MessageCount|The number of messages to retrieve|URL
+
+### Returns
+Array of [SMSIncomingMessage](#smsincomingmessage)
+
+
 ## GetIncomingMessagesByReferenceAfterID
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var incomingMessages = client.GetIncomingMessagesByReferenceAfterID(accountKey, messageNumber, reference);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+
+var url = string.Format("http://smsgateway.ca/services/incoming.svc/{0}/reference/{1}/afterId/{2}",
+    accountKey, HttpUtility.UrlEncode(reference), messageNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var response = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/incoming.svc/"
+  + accountKey + "/reference/" + reference + "/afterId/" + messageNumber
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $Reference;
+    public $MessageNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> Reference = reference;
+$parameters -> MessageNumber = 5000;
+
+
+$Result = $client->GetIncomingMessagesByReferenceAfterID($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/reference/[reference]/afterId/[messageNumber]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetIncomingMessagesByReferenceAfterID(accountKey, messageNumber, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/incoming.svc/{0}/reference/{1}/afterId/{2}",
+                        accountKey, HttpUtility.UrlEncode(reference), messageNumber)
+
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get a list of incoming messages with the given Reference which arrived after the message with the given ID.
 
+
+### HTTP Request
+**GET :** /services/incoming.svc/:accountKey/reference/:reference/afterId/:messageNumber
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+Reference|The reference of sent messages to retrieve replies to|URL
+MessageNumber|Retrieve incoming messages after this ID|URL
+
+### Returns
+Array of [SMSIncomingMessage](#smsincomingmessage)
+
+
+
 ## GetRepliesToMessage
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var incomingMessages = client.GetRepliesToMessage(accountKey, messageId);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+
+var url = string.Format("http://smsgateway.ca/services/incoming.svc/{0}/replies/{1}",
+    accountKey, messageId);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var response = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/incoming.svc/"
+  + accountKey + "/replies/" + messageId
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageID;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageID = lastMessageID;
+
+
+$Result = $client->GetRepliesToMessage($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/replies/[messageId]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetRepliesToMessage(accountKey, messageId)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/incoming.svc/{0}/replies/{1}",
+                        accountKey, messageId)
+
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get a list of incoming messages which have been matched to the given outbound message ID.
+
+
+### HTTP Request
+**GET :** /services/incoming.svc/:accountKey/replies/:messageId
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageID|Outgoing Message ID of message to retrieve replies to|URL
+
+### Returns
+Array of [SMSIncomingMessage](#smsincomingmessage)
+
+
 
 
 # Account Information
@@ -2422,6 +3005,33 @@ Performs a lookup on the given number and only if the number is wireless, an SMS
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
+
+# Data Types
+
+## SMSIncomingMessage
+
+Property|Type|Description
+-----|-----|-----
+AccountKey|string|The account key for the receiving account
+Message|string|The message body of the received message
+MessageNumber|integer|A unique identifier for the incoming message
+OutgoingMessageID|integer|If this is a reply to an outgoing message, will contain the MessageID of the outgoing message
+PhoneNumber|string|Phone number the message was received from
+ReceivedDate|DateTime|Date/Time message arrived
+
+## SMSIncomingMessageFull
+
+Property|Type|Description
+-----|-----|-----
+AccountKey|string|The account key for the receiving account
+Destination|string|The destination phone number (recipient number)
+Messagebody|string|The message body of the received message
+MessageNumber|integer|A unique identifier for the incoming message
+OutgoingMessageID|integer|If this is a reply to an outgoing message, will contain the MessageID of the outgoing message
+PhoneNumber|string|Phone number the message was received from
+ReceivedDate|DateTime|Date/Time message arrived
+Reference|string|If this is a reply to an outgoing message, this is the reference that was given on send
+
 
 
 # Authentication
