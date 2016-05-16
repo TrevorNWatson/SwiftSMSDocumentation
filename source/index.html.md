@@ -132,9 +132,9 @@ Sends an SMS message to the given phone number. Returns 'Message queued successf
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
 
 
 ### Returns
@@ -258,10 +258,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber/Extended
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `SMSSendMessageResponse`
@@ -378,10 +378,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber/Multi
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -500,11 +500,11 @@ POST: /services/message.svc/:accountKey/:destinationNumber/ViaDedicated
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
-sendingNumber|Sender ID (Long code number) to send the message via|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
+SendingNumber|Sender ID (Long code number) to send the message via|BODY
 
 ### Returns
 `string`
@@ -577,11 +577,11 @@ Sends an SMS message to the given phone number from the specified sender number.
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
-sendingNumber|Sender ID (Long code number) to send the message via|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
+SendingNumber|Sender ID (Long code number) to send the message via|BODY
 
 ### Returns
 `SMSSendMessageResponse`
@@ -726,11 +726,11 @@ POST: /services/message.svc/:accountKey/:destinationNumber/priority/:priority
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-prority|Priority of message.  1 = High  2 = Normal  3 = Low|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+Prority|Priority of message.  1 = High  2 = Normal  3 = Low|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -879,11 +879,11 @@ POST: /services/message.svc/:accountKey/:destinationNumber/PriorityExtended/:pri
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-prority|Priority of message.  1 = High  2 = Normal  3 = Low|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+Prority|Priority of message.  1 = High  2 = Normal  3 = Low|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 
 ### Returns
@@ -1006,10 +1006,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -1128,10 +1128,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber/Extended
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `SMSSendMessageResponse`
@@ -1203,10 +1203,10 @@ Sends an SMS message to the given phone number using two upsteam routes to maxim
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -1324,10 +1324,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber/Unicode
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -1443,10 +1443,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber/UnicodeExtended
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `SMSSendMessageResponse`
@@ -1563,10 +1563,10 @@ POST: /services/message.svc/:accountKey/:destinationNumber/MultiUnicode
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 
 ### Returns
 `string`
@@ -1681,8 +1681,8 @@ POST: /services/message.svc/:accountKey/:destinationNumber/MMS
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-destinationNumber|Cell number to receive the text message|URL
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
 URLOfContent|Fully qualified URL to the image to send via MMS|BODY
 
 
@@ -1818,9 +1818,9 @@ POST: /services/message.svc/:accountKey/Bulk
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
 
 ### Returns
@@ -1913,9 +1913,9 @@ Sends an SMS message to all the cell numbers provided. Returns the number of mes
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key|URL
-messageBody|Body of the message to send|BODY
-reference|Internal Reference ID|BODY
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
 CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
 Options|Array of strings with each containing [key]=[value]|BODY
 
@@ -1951,7 +1951,80 @@ If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
 </aside>
 
 ## SendBulkUnicodeMessage
-Sends an SMS message to all the cell numbers provided. Returns the number of messages successfully queued, or an error message on failure.
+```csharp
+var numbers = new SwiftSMS.ArrayOfString { destinationNumber, destinationNumber };
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var response = client.SendBulkUnicodeMessage(accountKey, messageBody, reference, numbers);
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+
+```javascript
+// uses JQuery library
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+    public $CellNumbers;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> Reference = reference;
+$parameters -> CellNumber = (destinationNumber, destinationNumber, ...);
+
+$Result = $client->SendBulkUnicodeMessage($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+# NOT CURRENTLY AVAILABLE #
+```
+
+```vb
+Dim numbers = New ArrayOfString()
+numbers.Add(destinationNumber)
+numbers.Add(destinationNumber)
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.SendBulkUnicodeMessage(accountKey, messageBody, reference, numbers)
+End Using
+
+' WebClient (REST)
+' NOT CURRENTLY AVAILABLE
+```
+
+Sends an SMS Unicode enabled message to all the cell numbers provided. Returns the number of messages successfully queued, or an error message on failure.
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
+CellNumbers|Array of cell numbers to deliver SMS messages to|BODY
+
+### Returns
+`string`
+
+If successful, will return "x messages queued successfully"
+
+If unsuccessful, will return an error message: See [SendMessage](#sendmessage)
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
