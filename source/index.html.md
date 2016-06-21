@@ -2918,20 +2918,436 @@ Array of [SMSIncomingMessage](#smsincomingmessage)
 # Account Information
 
 ##  GetCreditsUsedInDateRange
+
+```csharp
+var dateFrom = DateTime.Now.AddDays(-7);
+var dateTo = DateTime.Now;
+
+// Service Reference / SOAP
+using (var client = new SwiftSMS.SendSMSSoapClient())
+{
+    var messagesUsed = client.GetCreditsUsedInDateRange(accountKey, dateFrom, dateTo);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+
+// Convert .NET date/time to javascript friendly Unix epochs
+var DatetimeMinTimeTicks = (new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).Ticks;
+body.DateFrom = "/Date(" + ((dateFrom.ToUniversalTime().Ticks - DatetimeMinTimeTicks) / 10000) + ")/";
+body.DateTo = "/Date(" + ((dateTo.ToUniversalTime().Ticks - DatetimeMinTimeTicks) / 10000) + ")/";
+
+var url = string.Format("http://smsgateway.ca/services/account.svc/{0}/CreditsUsedInDateRange",
+    accountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messagesUsed = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/account.svc/"
+  + accountKey + "/CreditsUsedInDateRange"
+
+var todayDate = new Date();
+var weekAgo = new Date();
+weekAgo.setTime(todayDate.getTime()-(7*24*3600000));    // 7 days * 24 hours * 3600000 milliseconds
+
+var body = JSON.stringify({
+  DateFrom: todayDate.getTime(),
+  DateTo: weekAgo.getTime()
+});
+
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $DateFrom;
+    public $DateTo
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> DateFrom = '2016-01-01';
+$parameters -> DateTo = '2016-02-01';
+
+
+$Result = $client->GetCreditsUsedInDateRange($parameters);
+?>
+
+```
+
+```shell
+curl -X POST http://smsgateway.ca/services/account.svc/[accountKey]/CreditsUsedInDateRange ^
+    -H "Content-Type:application/json" -d @data.txt
+```
+
+```vb
+' Service Reference (SOAP)
+Dim dateFrom = Date.Now.AddDays(-7)
+Dim dateTo = Date.Now
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetCreditsUsedInDateRange(accountKey, dateFrom, dateTo)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/account.svc/{0}/CreditsUsedInDateRange",
+                        accountKey)
+Dim body = String.Format("{{ ""DateFrom"": ""/Date({0})/"", " & _
+                            "   ""DateTo"" : ""/Date({1})/"" " & _
+                            "}}",
+                            epochDateFrom, epochDateTo)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+
+' Function to convert .NET Date to JSON friendly Epoch date (in milliseconds)
+Public Function DateTimeToEpoch(ByVal DateTimeValue As Date) As Long
+    '
+    Try
+        Return CLng(DateTimeValue.Subtract(CDate("1.1.1970 00:00:00")).TotalSeconds) * 1000
+    Catch ex As System.OverflowException
+        Return -1
+    End Try
+
+End Function
+```
+
 Get a count of message credits used by an account between the given dates
 
-## GetRemainingMessageCount
+
+### HTTP Request
+**POST :** /services/account.svc/:accountKey/CreditsUsedInDateRange
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+DateFrom|Start date for credit usage report|BODY
+DateTo|End date for credit usage report|BODY
+
+### Returns
+`integer` 
+
+## GetPendingMessageCount
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messagesRemaining = client.GetPendingMessageCount(accountKey);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/account.svc/{0}/PendingMessageCount",
+    accountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messagesRemaining = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/account.svc/"
+  + accountKey "/PendingMessageCount"
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+
+
+$Result = $client->GetPendingMessageCount($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/account.svc/[accountKey]/PendingMessageCount"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetPendingMessageCount(accountKey)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/account.svc/{0}/PendingMessageCount",
+                        accountKey)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Returns the number of messages currently waiting in queue at our gateway. Returns -1 on error.
 
+**GET :** /services/account.svc/:accountKey/PendingMessageCount
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+
+### Returns
+`integer` 
+
 ## GetRemainingMessageCount
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messagesRemaining = client.GetRemainingMessageCount(accountKey);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/account.svc/{0}/RemainingMessageCount",
+    accountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messagesRemaining = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/account.svc/"
+  + accountKey "/RemainingMessageCount"
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+
+
+$Result = $client->GetRemainingMessageCount($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/account.svc/[accountKey]/RemainingMessageCount"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetRemainingMessageCount(accountKey)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/account.svc/{0}/RemainingMessageCount",
+                        accountKey)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get a count of remaining message credits on the given account
 
+**GET :** /services/account.svc/:accountKey/RemainingMessageCount
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+
+### Returns
+`integer` 
+
 ## MoveCreditsToClient
-Available only on our Enterprise Service Plan. Move message credits from a master account to a client account
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var creditsMoved = client.MoveCreditsToClient(masterAccountKey, clientAccountKey, numberOfCredits);
+}
+
+dynamic body = new ExpandoObject();
+body.NumberOfCredits = 10;
+
+var url = string.Format("http://smsgateway.ca/services/account.svc/{0}/MoveCreditsToClient/{1}",
+    masterAccountKey, clientAccountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var creditsMoved = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/account.svc/"
+  + masterAccountKey + "/MoveCreditsToClient/" + clientAccountKey
+
+
+var body = JSON.stringify({
+  NumberOfCredits: numberOfCredits
+});
+
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $MasterAccountKey;
+    public $ClientAccountKey;
+    public $NumberOfCredits;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> MasterAccountKey = masterAccountKey;
+$parameters -> ClientAccountKey = clientAccountKey;
+$parameters -> NumberOfCredits = numberOfCredits;
+
+
+$Result = $client->MoveCreditsToClient($parameters);
+?>
+```
+
+```shell
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/account.svc/[masterAccountKey]/MoveCreditsToClient/[clientAccountKey]" \
+     --data "{\"NumberOfCredits\": 10 }
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.MoveCreditsToClient(masterAccountKey, clientAccountKey, numberOfCredits)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/account.svc/{0}/MoveCreditsToClient/{1}",
+                        masterAccountKey, clientAccountKey)
+Dim body = String.Format("{{ ""NumberOfCredits"": {0} }}", numberOfCredits)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Move message credits from a master account to a client account
 
 <aside class="notice">
  Available only on our API 3 Plans.
 </aside>
+
+**POST :** /services/account.svc/:masterAccountKey/MoveCreditsToClient/:clientAccountKey
+
+Parameter|Description|Location
+------|------|-----
+masterAccountKey|Your Parent Swift SMS Gateway account key (Credits moved FROM this account)|URL
+clientAccountKey|Your Child Swift SMS Gateway account key (Credits moved TO this account)|URL
+NumberOfCredits|The number of credits to move from the MASTER to the CLIENT account|BODY
+
+### Returns
+`integer` &ndash; The number of credits moved to the client account.  Zero if there was an issue moving credits.
 
 # Get the status of a message
 
