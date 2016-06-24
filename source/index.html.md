@@ -3536,13 +3536,163 @@ accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|U
 messageCount|The number of messages to retrieve|URL
 
 ### Returns
-Array of [SMSMessage](#smsmessage)
+Array of [SMSOutgoingMessage](#smsoutgoingmessage)
 
 ## GetSentMessagesAfterID
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messages = client.GetSentMessagesAfterID(accountKey, messageNumber);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/afterId/{1}",
+    accountKey, messageCount);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messages = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/afterId/" + messageNumber
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageNumber = messageNumber;
+
+
+$Result = $client->GetSentMessagesAfterID($parameters);
+?>
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/afterId/[messageNumber]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetSentMessagesAfterID(accountKey, messageCount)
+End Using
+
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/afterId/{1}",
+                        accountKey, messageNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+
+```
+
 Returns an array of (at most 1000) sent SMS Messages with IDs greater than the given one.
 
+**GET :** /services/message.svc/:accountKey/afterId/:messageCount
+
+Parameter|Description|Location
+------|------|-----
+accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+messageId|The unique Message ID of the SMS to retrieve messages after|URL
+
+### Returns
+Array of [SMSOutgoingMessage](#smsoutgoingmessage)
+
 ## GetSentMessagesAfterIDSimple
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messages = client.GetSentMessagesAfterIDSimple(accountKey, messageNumber);
+}
+
+// Web Client / REST
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```javascript
+/** NOT CURRENTLY AVAILABLE **/
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageNumber = messageNumber;
+
+$Result = $client->GetSentMessagesAfterIDSimple($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+### NOT CURRENTLY AVAILABLE ###
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetSentMessagesAfterIDSimple(accountKey, messageCount)
+End Using
+
+' WebClient (REST)
+'** NOT CURRENTLY AVAILABLE **'
+```
+
 Returns an array of (at most 1000) sent SMS Messages with IDs greater than the given one in strings with fields separated by the tilde (~) character. Field order is MessageID~CellNumber~MessageBody~SentDate~Success~Reference.
+
+Parameter|Description|Location
+------|------|-----
+accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|n/a
+messageId|The unique Message ID of the SMS to retrieve messages after|n/a
+
+### Returns
+Array of `string`
 
 ## GetSentMessagesByReference
 Returns an array of (at most 1000) sent SMS Messages with the given reference value.
