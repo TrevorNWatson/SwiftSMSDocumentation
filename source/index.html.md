@@ -3352,12 +3352,191 @@ NumberOfCredits|The number of credits to move from the MASTER to the CLIENT acco
 # Get the status of a message
 
 ## GetOutgoingMessage
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var outgoingMessage = client.GetOutgoingMessage(messageId, accountKey);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/id/{1}",
+    accountKey, messageId);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var outgoingMessage = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/id/" + messageId
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageID;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageID = messageId;
+
+
+$Result = $client->GetOutgoingMessage($parameters);
+?>
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/id/[messageId]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetOutgoingMessage(messageId, accountKey)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/id/{1}",
+                        accountKey, messageId)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Get the status of an outgoing message by suppying the message ID and account key
+
+**POST :** /services/message.svc/:accountKey/id/:messageId
+
+Parameter|Description|Location
+------|------|-----
+accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+messageId|The unique Message ID of the SMS to retrieve the information for|URL
+
+### Returns
+[SMSOutgoingMessage](#smsoutgoingmessage)
+
 
 # Get the status of a sent message
 
 ## GetSentMessages
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messages = client.GetSentMessages(accountKey, messageCount);
+}
+
+    var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/count/{1}",
+    accountKey, messageCount);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messages = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/countid/" + messageCount
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageCount;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageCount = messageCount;
+
+
+$Result = $client->GetSentMessages($parameters);
+?>
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/count/[messageCount]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetSentMessages(accountKey, messageCount)
+End Using
+
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/count/{1}",
+                        accountKey, messageCount)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Returns an array of the X most recently sent SMS Messages
+
+**GET :** /services/message.svc/:accountKey/count/:messageCount
+
+Parameter|Description|Location
+------|------|-----
+accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+messageCount|The number of messages to retrieve|URL
+
+### Returns
+Array of [SMSMessage](#smsmessage)
 
 ## GetSentMessagesAfterID
 Returns an array of (at most 1000) sent SMS Messages with IDs greater than the given one.
@@ -3448,7 +3627,19 @@ PhoneNumber|string|Phone number the message was received from
 ReceivedDate|DateTime|Date/Time message arrived
 Reference|string|If this is a reply to an outgoing message, this is the reference that was given on send
 
+## SMSOutgoingMessage
 
+Property|Type|Description
+-----|-----|-----
+Body|string|Message body of SMS
+CellNumber|string|Destination cell number of SMS
+CreditsDeducted|integer|Number of credits deducted for sending the SMS message
+MessageID|long|Unique Message ID of outgoing SMS
+QueueDate|datetime|Date/Time message was queued to send
+Reference|string|Reference supplied when sending SMS
+SendDate|datetime|Date/Time message was sent to carrier cloud
+Sent|boolean|True if sent, False if failed or pending
+SuccessString|string|Message state: Success, Failed or Pending
 
 # Authentication
 > To authorize, use this code:
