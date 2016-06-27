@@ -3138,6 +3138,7 @@ End Using
 
 Returns the number of messages currently waiting in queue at our gateway. Returns -1 on error.
 
+### HTTP Request
 **GET :** /services/account.svc/:accountKey/PendingMessageCount
 
 Parameter|Description|Location
@@ -3229,6 +3230,7 @@ End Using
 
 Get a count of remaining message credits on the given account
 
+### HTTP Request
 **GET :** /services/account.svc/:accountKey/RemainingMessageCount
 
 Parameter|Description|Location
@@ -3338,6 +3340,7 @@ Move message credits from a master account to a client account
  Available only on our API 3 Plans.
 </aside>
 
+### HTTP Request
 **POST :** /services/account.svc/:masterAccountKey/MoveCreditsToClient/:clientAccountKey
 
 Parameter|Description|Location
@@ -3432,6 +3435,7 @@ End Using
 
 Get the status of an outgoing message by suppying the message ID and account key
 
+### HTTP Request
 **POST :** /services/message.svc/:accountKey/id/:messageId
 
 Parameter|Description|Location
@@ -3528,6 +3532,7 @@ End Using
 
 Returns an array of the X most recently sent SMS Messages
 
+### HTTP Request
 **GET :** /services/message.svc/:accountKey/count/:messageCount
 
 Parameter|Description|Location
@@ -3623,6 +3628,7 @@ End Using
 
 Returns an array of (at most 1000) sent SMS Messages with IDs greater than the given one.
 
+### HTTP Request
 **GET :** /services/message.svc/:accountKey/afterId/:messageCount
 
 Parameter|Description|Location
@@ -3695,21 +3701,343 @@ messageId|The unique Message ID of the SMS to retrieve messages after|n/a
 Array of `string`
 
 ## GetSentMessagesByReference
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messages = client.GetSentMessagesByReference(accountKey, reference);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/reference/{1}",
+    accountKey, HttpUtility.UrlEncode(reference));
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messages = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/reference/" + encodeURI(reference)
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $Reference;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> Reference = reference;
+
+
+$Result = $client->GetSentMessagesByReference($parameters);
+?>
+
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/reference/[reference]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetSentMessagesByReference(accountKey, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/reference/{1}",
+                        accountKey, HttpUtility.UrlEncode(reference))
+Dim body = String.Format("{{ ""NumberOfCredits"": {0} }}", numberOfCredits)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
+
 Returns an array of (at most 1000) sent SMS Messages with the given reference value.
 
+### HTTP Request
+**GET :** /services/message.svc/:accountKey/reference/:reference
+
+Parameter|Description|Location
+------|------|-----
+accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+reference|The refrence supplied on send|URL
+
+### Returns
+Array of [SMSOutgoingMessage](#smsoutgoingmessage)
+
 ## GetSentMessagesByReferenceAfterID
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messages = client.GetSentMessagesByReferenceAfterID(accountKey, reference, messageNumber);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/referenceafterid/{1}/{2}",
+    accountKey, messageNumber, HttpUtility.UrlEncode(reference));
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messages = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/referenceafterid/" + messageNumber + "/" + encodeURI(reference)
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $MessageNumber;
+    public $Reference;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageNumber = messageNumber;
+$parameters -> Reference = reference;
+
+
+$Result = $client->GetSentMessagesByReferenceAfterID($parameters);
+?>
+```
+
+```shell
+curl "http://smsgateway.ca/services/incoming.svc/[accountKey]/referenceafterid/[messageNumber]/[reference]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetSentMessagesByReferenceAfterID(accountKey, reference, messageNumber)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/referenceafterid/{1}/{2}",
+                        accountKey, messageNumber, HttpUtility.UrlEncode(reference))
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Returns an array of (at most 1000) sent SMS Messages with the given reference value which also have IDs greater than the given one.
+
+### HTTP Request
+**GET :** /services/message.svc/:accountKey/referenceafterid/:messageNumber/:reference
+
+Parameter|Description|Location
+------|------|-----
+accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+messageNumber|The unique message number to retrieve records after|URL
+reference|The refrence supplied on send|URL
+
+### Returns
+Array of [SMSOutgoingMessage](#smsoutgoingmessage)
 
 # Get the status of an Unsent Message
 
 ## GetUnsentMessages
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var messages = client.GetUnsentMessages(accountKey, dateFrom, dateTo, messageStatus);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+
+// Convert .NET date/time to javascript friendly Unix epochs
+body.DateFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd");
+body.DateTo = DateTime.Now.ToString("yyyy-MM-dd");
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/{0}/unsent/{1}",
+    accountKey, messageStatus);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var messagesUsed = wClient.UploadString(url,
+            Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/unsent/" + messageStatus
+var body = JSON.stringify({
+  DateFrom: "2016-01-01",
+  DateTo: "2016-01-07",
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $DateFrom;
+    public $DateTo
+    public $MessageStatus;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> DateFrom = '2016-01-01';
+$parameters -> DateTo = '2016-02-01';
+$parameters -> MessageStatus = messageStatus;
+
+
+$Result = $client->GetCreditsUsedInDateRange($parameters);
+?>
+```
+
+```shell
+curl -X POST http://smsgateway.ca/services/account.svc/[accountKey]/unsent/[messageStatus] ^
+    -H "Content-Type:application/json" -d @data.txt
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.GetUnsentMessages(accountKey, dateFrom, dateTo, messageStatus)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/unsent/{1}/",
+                        accountKey, messageStatus)
+
+Dim dateFrom = DateTime.Now.AddDays(-7).ToString("yyyy-MM-dd")
+Dim dateTo = DateTime.Now.ToString("yyyy-MM-dd")
+
+Dim body = String.Format("{{ " & _
+                            """NumberOfCredits"": {0}, " & _
+                            """DateTo"": {1} " & _
+                            "}}", dateFrom, dateTo)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
 Returns an array of unsent SMS Messages queued between the given dates
 
+### HTTP Request
+**POST :** /services/message.svc/:accountKey/unsent/:messageStatus
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key (Credits moved FROM this account)|URL
+messageStatus|The status of the unsent message (1 = Pending, 2 = Time Restriction, 3 = Failed)|URL
+dateFrom|Start date of the date range to report on|BODY
+dateTo|End date of the date range to report on|BODY
+
+### Returns
+Array of [SMSOutgoingMessage](#smsoutgoingmessage)
 
 # Lookup Number Information
 
 
 ## HLRLookup
+
+```csharp
+
+```
+
+```javascript
+
+```
+
+```php
+
+```
+
+```shell
+
+```
+
+```vb
+
+```
+
 Returns details about the carrier of the given North American phone number.
 
 <aside class="notice">
@@ -3738,10 +4066,9 @@ Returns details about the carrier of the given North American phone number.
 </aside>
 
 ## LookupNumber
-Please use LRNLookup or HLRLookup
 
-<aside class="notice">
- Available only on our API 2 and API 3 Plans.
+<aside class="warning">
+This method is depreciated and should not be used.  Please use <a href="#lrnlookup">LRNLookup</a> or <a href="#hlrlookup">HLRLookup</a> instead
 </aside>
 
 ## LookupNumberThenSend
@@ -3790,6 +4117,37 @@ Reference|string|Reference supplied when sending SMS
 SendDate|datetime|Date/Time message was sent to carrier cloud
 Sent|boolean|True if sent, False if failed or pending
 SuccessString|string|Message state: Success, Failed or Pending
+
+## HLRNumberInfo
+Property|Type|Description
+-----|-----|-----
+ErrorMessage|string|Empty if no error, if there was an error on lookup, this will describe what the issue is
+country|[HLRCountryInfo](#hlrcountryinfo)|Country information for the number 
+msisdn|string|The full phone number including international dialing prefix
+network|[HLRNetworkInfo](#hlrnetworkinfo)|Network information for the phone number
+networkPrefix|string|Network prefix of phone number
+valid|boolean|Is phone number a valid number
+
+
+## HLRCountryInfo
+Property|Type|Description
+-----|-----|-----
+code|string|Country acronym
+id|integer|Returns "0"
+locale|string|Local region of phone number (e.g. America/New York")
+name|string|Full country name (e.g. Canada)
+prefix|string|International dialing prefix
+
+
+## HLRNetworkInfo
+Property|Type|Description
+-----|-----|-----
+countryId|integer|Numeric representation of phone's country
+id|integer|Should always return "0"
+mcc|string|Mobile Country Code - Numeric representation of phone number's country for mobile carriers
+mnc|string|Mobile Network Code - Numeric representation of phone number's carrier (if blank does not belong to a mobile carrier)
+name|string|Long name of mobile carrier
+
 
 # Authentication
 > To authorize, use this code:
