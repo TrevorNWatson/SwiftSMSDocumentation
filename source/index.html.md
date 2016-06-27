@@ -24,17 +24,23 @@ To use the Swift SMS Gateway API, please sign up for an account at [http://smsga
 To use Swift SMS Gateway via our web services, you must point to the appropriate endpoint.
 
 If using the simple HTTP send method
-** HTTP: ** http://smsgateway.ca/SendMessage.aspx
-** HTTPS: ** https://secure.smsgateway.ca/SendMessage.aspx
+
+**HTTP:** http://smsgateway.ca/SendMessage.aspx
+
+**HTTPS:** https://secure.smsgateway.ca/SendMessage.aspx
 
 If using .NET service references (or accessing our web service via a SOAP library (such as http://ca3.php.net/soap)), you do not need to access the individual endpoints.  Instead, use the single endpoint:
-** HTTP: ** http://smsgateway.ca/SendMessage.asmx
-** HTTPS: ** https://secure.smsgateway.ca/SendMessage.asmx
+
+**HTTP:** http://smsgateway.ca/SendMessage.asmx
+
+**HTTPS:** https://secure.smsgateway.ca/SendMessage.asmx
 
 
 If using a REST-friendly language or library you must change your URL based on the **HTTP Request** section in each function. The base URLs are
-** HTTP: ** http://smsgateway.ca/services/
-** HTTPS: ** https://secure.smsgateway.ca/services/
+
+**HTTP:** http://smsgateway.ca/services/
+
+**HTTPS:** https://secure.smsgateway.ca/services/
 
 
 
