@@ -1,5 +1,5 @@
 ---
-title: API Reference
+title: Swift SMS Gateway - API Reference
 language_tabs:
   - javascript
   - javascript : node.js 
@@ -11,18 +11,32 @@ toc_footers:
   - "<a href='http://smsgateway.ca'>Sign up for an account</a>"
   - "<a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>"
 includes:
-  - errors
 search: true
 ---
 
 # Introduction
-Welcome to the Swift SMS Gateway API! You can use our API to send SMS messages anywhere in the world.
+Welcome to the Swift SMS Gateway API! You can use our API to easily send SMS messages anywhere in the world.
 
-We have language bindings in C#, javascript, php, perl, and VB! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](https://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
 
 To use the Swift SMS Gateway API, please sign up for an account at [http://smsgateway.ca](http://smsgateway.ca)
+
+## Endpoints
+To use Swift SMS Gateway via our web services, you must point to the appropriate endpoint.
+
+If using the simple HTTP send method
+** HTTP: ** http://smsgateway.ca/SendMessage.aspx
+** HTTPS: ** https://secure.smsgateway.ca/SendMessage.aspx
+
+If using .NET service references (or accessing our web service via a SOAP library (such as http://ca3.php.net/soap)), you do not need to access the individual endpoints.  Instead, use the single endpoint:
+** HTTP: ** http://smsgateway.ca/SendMessage.asmx
+** HTTPS: ** https://secure.smsgateway.ca/SendMessage.asmx
+
+
+If using a REST-friendly language or library you must change your URL based on the **HTTP Request** section in each function. The base URLs are
+** HTTP: ** http://smsgateway.ca/services/
+** HTTPS: ** https://secure.smsgateway.ca/services/
+
+
 
 # Sending a SMS message
 ## SendMessage
@@ -4437,7 +4451,122 @@ This method is depreciated and should not be used.  Please use <a href="#lrnlook
 </aside>
 
 ## LookupNumberThenSend
-Performs a lookup on the given number and only if the number is wireless, an SMS is sent. Returns 'Message queued successfully' on successful send, or an error message on fail.
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var response = client.LookupNumberThenSend(accountKey, phoneNumber, messageBody, refrence);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.MessageBody = messageBody;
+body.Reference = reference;
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/LookupNumberThenSend/{0}/{1}", 
+    accountKey, destinationNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add("content-type", "application/json");
+
+    string response = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/LookupNumberThenSend/"
+  + accountKey + "/" + destinationNumber
+var body = JSON.stringify({
+  MessageBody: "Message Body",
+  Reference: "Reference"
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $CellNumber;
+    public $AccountKey;
+    public $MessageBody;
+    public $Reference;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> CellNumber = destinationNumber;
+$parameters -> AccountKey = accountKey;
+$parameters -> MessageBody = "This is a demonstration of SMSGateway.ca using PHP5.";
+$parameters -> Reference = refrence;
+
+$Result = $client->LookupNumberThenSend($parameters);
+?>
+```
+
+```shell
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/LookupNumberThenSend/[accountKey]/[destination]" \
+     --data "{\"MessageBody\": \"[messageBody]\", \"Reference\": \"[reference]\"}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.LookupNumberThenSend(destinationNumber, messageBody,
+                    accountKey, reference)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/LookupNumberThenSend/{0}/{1}",
+                        accountKey, destinationNumber)
+Dim body = String.Format("{{ ""MessageBody"": ""{0}"", " & _
+                         "   ""Reference"" : ""{1}"" }}",
+                            messageBody, reference)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add("content-type", "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+
+Performs a lookup on the given number and only if the number is wireless, an SMS is sent. Returns 'Message queued successfully' on successful send, or an error message (see [SendMessage](#sendmessage)) on failure.
+
+### HTTP Request
+POST: /services/message.svc/LookupNumberThenSend/:accountKey/:destinationNumber
+
+Parameter|Description|Location
+------|------|-----
+AccountKey|Your Swift SMS Gateway account key|URL
+DestinationNumber|Cell number to receive the text message|URL
+MessageBody|Body of the message to send|BODY
+Reference|Internal Reference ID|BODY
+
+### Returns
+`string`
+
+See [SendMessage](#sendmessage)
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
@@ -4526,139 +4655,3 @@ PhoneNumber|string|Full phone number including international calling code
 RateCenter|string|Regional rate center
 SwitchName|string|Switch name (regional information)
 
-
-# Authentication
-> To authorize, use this code:
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
-
-> Make sure to replace `meowmeowmeow` with your API key.
-
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
-
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: meowmeowmeow`
-<aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
-</aside>
-
-# Kittens
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
-
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
-]
-```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter    | Default | Description
------------- | ------- | --------------------------------------------------------------------------------
-include_cats | false   | If set to true, the result will also include cats.
-available    | true    | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | --------------------------------
-ID        | The ID of the kitten to retrieve
