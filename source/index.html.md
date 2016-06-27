@@ -4210,6 +4210,14 @@ End Using
 
 Returns details about the carrier of the given North American phone numbers.
 
+### HTTP Request
+**POST :** /services/message.svc/HLRLookupBulk/:accountKey
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key (Credits moved FROM this account)|URL
+phoneNumbers|Array of phone numbers to perform a HLR lookup on|BODY
+
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
