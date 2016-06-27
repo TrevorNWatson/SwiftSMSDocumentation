@@ -4019,33 +4019,196 @@ Array of [SMSOutgoingMessage](#smsoutgoingmessage)
 ## HLRLookup
 
 ```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var numberInfo = client.HLRLookup(accountKey, phoneNumber);
+}
 
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/message.svc/HLRLookup/{0}/{1}",
+    accountKey, phoneNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var numberInfo = wClient.DownloadString(url);
+}
 ```
 
 ```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  + accountKey + "/HLRLookup/" + phoneNumber
 
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
 ```
 
 ```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
 
+class SMSParam {
+    public $AccountKey;
+    public $PhoneNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> PhoneNumber = phoneNumber;
+
+
+$Result = $client->HLRLookup($parameters);
+?>
 ```
 
 ```shell
-
+curl "http://smsgateway.ca/services/message.svc/[accountKey]/HLRLookup/[phoneNumber]"
 ```
 
 ```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.HLRLookup(accountKey, phoneNumber)
+End Using
 
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/HLRLookup/{1}",
+                        accountKey, phoneNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
 ```
 
 Returns details about the carrier of the given North American phone number.
+
+### HTTP Request
+**GET :** /services/message.svc/HLRLookup/:accountKey/:phoneNumber
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key (Credits moved FROM this account)|URL
+phoneNumber|The phone number to perform a HLR lookup on|URL
+
+### Returns
+[HLRNumberInfo](#hlrnumberinfo)
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
 
 ## HLRLookupBulk
-Returns details about the carrier of the given North American phone number.
+
+```csharp
+// Service Reference / SOAP
+var phoneNumbers = new SwiftSecure.ArrayOfString { "5552125555", "5553135555" };
+
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var numberInfo = client.HLRLookupBulk(accountKey, phoneNumber);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.phoneNumbers = new[] { "5552125555", "5553135555" };
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/HLRLookupBulk/{0}",
+    accountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var numberInfo = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  "HLRLookupBulk/" + accountKey;
+var body = JSON.stringify({
+  phoneNumbers: [destinationNumber, destinationNumber, ...]
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $PhoneNumbers;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> PhoneNumbers = (destinationNumber, destinationNumber, ...);
+
+$Result = $client->HLRLookupBulk($parameters);
+?>
+
+```
+
+```shell
+
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/HLRLookupBulk/[accountKey]" \
+     --data "{\"PhoneNumbers\": [\"destinationNumber\", ...]}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.HLRLookupBulk(accountKey, phoneNumbers)
+End Using
+
+Dim url = String.Format("http://smsgateway.ca/services/message.svc//HLRLookupBulk/{0}",
+                        accountKey)
+Dim body = "{""PhoneNumbers"": [" & _
+    """5552125555"", ""5553135555"", ..." & _
+    "]}"
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Returns details about the carrier of the given North American phone numbers.
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
