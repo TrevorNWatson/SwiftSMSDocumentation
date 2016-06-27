@@ -8,7 +8,7 @@ language_tabs:
   - shell: cURL
   - csharp : C#
 toc_footers:
-  - "<a href='http://smsgateway.ca'>Sign up for an account</a>"
+  - "<a href='https://secure.smsgateway.ca/ns/Users/SwiftSignup.aspx'>Sign up for an account</a>"
   - "<a href='https://github.com/tripit/slate'>Documentation Powered by Slate</a>"
 includes:
 search: true
