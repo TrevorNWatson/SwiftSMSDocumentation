@@ -3440,7 +3440,7 @@ Get the status of an outgoing message by suppying the message ID and account key
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|YourSwift SMS Gateway account key|URL
 messageId|The unique Message ID of the SMS to retrieve the information for|URL
 
 ### Returns
@@ -3537,7 +3537,7 @@ Returns an array of the X most recently sent SMS Messages
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|YourSwift SMS Gateway account key|URL
 messageCount|The number of messages to retrieve|URL
 
 ### Returns
@@ -3633,7 +3633,7 @@ Returns an array of (at most 1000) sent SMS Messages with IDs greater than the g
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|YourSwift SMS Gateway account key|URL
 messageId|The unique Message ID of the SMS to retrieve messages after|URL
 
 ### Returns
@@ -3694,7 +3694,7 @@ Returns an array of (at most 1000) sent SMS Messages with IDs greater than the g
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|n/a
+accountKey|YourSwift SMS Gateway account key|n/a
 messageId|The unique Message ID of the SMS to retrieve messages after|n/a
 
 ### Returns
@@ -3789,7 +3789,7 @@ Returns an array of (at most 1000) sent SMS Messages with the given reference va
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|YourSwift SMS Gateway account key|URL
 reference|The refrence supplied on send|URL
 
 ### Returns
@@ -3885,7 +3885,7 @@ Returns an array of (at most 1000) sent SMS Messages with the given reference va
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|YourSwift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|YourSwift SMS Gateway account key|URL
 messageNumber|The unique message number to retrieve records after|URL
 reference|The refrence supplied on send|URL
 
@@ -4005,7 +4005,7 @@ Returns an array of unsent SMS Messages queued between the given dates
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|Your Swift SMS Gateway account key|URL
 messageStatus|The status of the unsent message (1 = Pending, 2 = Time Restriction, 3 = Failed)|URL
 dateFrom|Start date of the date range to report on|BODY
 dateTo|End date of the date range to report on|BODY
@@ -4040,8 +4040,8 @@ using (var wClient = new System.Net.WebClient())
 
 ```javascript
 // uses JQuery library
-var postUrl = "http://smsgateway.ca/services/message.svc/"
-  + accountKey + "/HLRLookup/" + phoneNumber
+var postUrl = "http://smsgateway.ca/services/message.svc/" +
+  "HLRLookup/" + accountKey + "/" + phoneNumber;
 
 $.ajax({
     url: postUrl,
@@ -4075,7 +4075,7 @@ $Result = $client->HLRLookup($parameters);
 ```
 
 ```shell
-curl "http://smsgateway.ca/services/message.svc/[accountKey]/HLRLookup/[phoneNumber]"
+curl "http://smsgateway.ca/services/message.svc/HLRLookup/[accountKey]/[phoneNumber]"
 ```
 
 ```vb
@@ -4085,7 +4085,7 @@ Using client = New SwiftSMS.SendSMSSoapClient
 End Using
 
 ' WebClient (REST)
-Dim url = String.Format("http://smsgateway.ca/services/message.svc/{0}/HLRLookup/{1}",
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/HLRLookup/{0}/{1}",
                         accountKey, phoneNumber)
 
 Using wClient = New Net.WebClient
@@ -4103,7 +4103,7 @@ Returns details about the carrier of the given North American phone number.
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|Your Swift SMS Gateway account key|URL
 phoneNumber|The phone number to perform a HLR lookup on|URL
 
 ### Returns
@@ -4215,7 +4215,7 @@ Returns details about the carrier of the given North American phone numbers.
 
 Parameter|Description|Location
 ------|------|-----
-accountKey|Your Swift SMS Gateway account key (Credits moved FROM this account)|URL
+accountKey|Your Swift SMS Gateway account key|URL
 phoneNumbers|Array of phone numbers to perform a HLR lookup on|BODY
 
 <aside class="notice">
@@ -4223,14 +4223,208 @@ phoneNumbers|Array of phone numbers to perform a HLR lookup on|BODY
 </aside>
 
 ## LRNLookup
+
+```csharp
+// Service Reference / SOAP
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var numberInfo = client.LRNLookup(accountKey, phoneNumber);
+}
+
+// Web Client / REST
+var url = string.Format("http://smsgateway.ca/services/message.svc/LRNLookup/{0}/{1}",
+    accountKey, phoneNumber);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var numberInfo = wClient.DownloadString(url);
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  "LRNLookup/" + accountKey + "/" + phoneNumber;
+
+$.ajax({
+    url: postUrl,
+    method: "GET",
+    contentType: "application/json;charset=UTF-8"
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $PhoneNumber;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> PhoneNumber = phoneNumber;
+
+
+$Result = $client->LRNLookup($parameters);
+?>
+```
+
+```shell
+curl "http://smsgateway.ca/services/message.svc/LRNLookup/[accountKey]/[phoneNumber]"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.LRNLookup(accountKey, phoneNumber)
+End Using
+
+' WebClient (REST)
+Dim url = String.Format("http://smsgateway.ca/services/message.svc/LRNLookup/{0}/{1}",
+                        accountKey, phoneNumber)
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.DownloadString(url)
+End Using
+```
+
 Returns details about the carrier of the given North American phone number.
+
+### HTTP Request
+**GET :** /services/message.svc/HLRLookup/:accountKey/:phoneNumber
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+phoneNumber|The phone number to perform a HLR lookup on|URL
+
+### Returns
+[LRNNumberInfo](#lrnnumberinfo)
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
 </aside>
 
 ## LRNLookupBulk
-Returns details about the carrier of the given North American phone number.
+
+
+```csharp
+// Service Reference / SOAP
+var phoneNumbers = new SwiftSecure.ArrayOfString { "5552125555", "5553135555" };
+
+using (var client = new SwiftSecure.SendSMSSoapClient())
+{
+    var numberInfo = client.LRNLookupBulk(accountKey, phoneNumber);
+}
+
+// Web Client / REST
+dynamic body = new ExpandoObject();
+body.phoneNumbers = new[] { "5552125555", "5553135555" };
+
+var url = string.Format("http://smsgateway.ca/services/message.svc/LRNLookupBulk/{0}",
+    accountKey);
+
+using (var wClient = new System.Net.WebClient())
+{
+    wClient.Encoding = Encoding.UTF8;
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json");
+
+    var numberInfo = wClient.UploadString(url,
+        Newtonsoft.Json.JsonConvert.SerializeObject(body));
+}
+```
+
+```javascript
+// uses JQuery library
+var postUrl = "http://smsgateway.ca/services/message.svc/"
+  "LRNLookupBulk/" + accountKey;
+var body = JSON.stringify({
+  phoneNumbers: [destinationNumber, destinationNumber, ...]
+});
+$.ajax({
+    url: postUrl,
+    method: "POST",
+    contentType: "application/json;charset=UTF-8",
+    data: body
+}).done(function(response) {
+  alert(response);
+}).error(function (xhr, textStatus, errorThrown) {
+  alert (xhr.responseText);
+});
+```
+
+```php
+<?php
+// using SOAP Module - http://ca3.php.net/soap
+
+class SMSParam {
+    public $AccountKey;
+    public $PhoneNumbers;
+}
+
+$client = new SoapClient('http://www.smsgateway.ca/sendsms.asmx?WSDL');
+$parameters = new SMSParam;
+
+$parameters -> AccountKey = accountKey;
+$parameters -> PhoneNumbers = (destinationNumber, destinationNumber, ...);
+
+$Result = $client->LRNLookupBulk($parameters);
+?>
+
+```
+
+```shell
+
+HTTP POST:
+curl -H "Content-Type: application/json" -X POST \
+     "http://smsgateway.ca/services/message.svc/LRNLookupBulk/[accountKey]" \
+     --data "{\"PhoneNumbers\": [\"destinationNumber\", ...]}"
+```
+
+```vb
+' Service Reference (SOAP)
+Using client = New SwiftSMS.SendSMSSoapClient
+    Dim response = client.LRNLookupBulk(accountKey, phoneNumbers)
+End Using
+
+Dim url = String.Format("http://smsgateway.ca/services/message.svc//LRNLookupBulk/{0}",
+                        accountKey)
+Dim body = "{""PhoneNumbers"": [" & _
+    """5552125555"", ""5553135555"", ..." & _
+    "]}"
+
+Using wClient = New Net.WebClient
+    wClient.Encoding = New UTF8Encoding()
+    wClient.Headers.Add(HttpRequestHeader.ContentType, "application/json")
+
+    Dim wResponse = wClient.UploadString(url, body)
+End Using
+```
+
+Returns details about the carrier of the given North American phone numbers.
+
+### HTTP Request
+**POST :** /services/message.svc/HLRLookupBulk/:accountKey
+
+Parameter|Description|Location
+------|------|-----
+accountKey|Your Swift SMS Gateway account key|URL
+phoneNumbers|Array of phone numbers to perform a LRN lookup on|BODY
+
 
 <aside class="notice">
  Available only on our API 2 and API 3 Plans.
@@ -4318,6 +4512,19 @@ id|integer|Should always return "0"
 mcc|string|Mobile Country Code - Numeric representation of phone number's country for mobile carriers
 mnc|string|Mobile Network Code - Numeric representation of phone number's carrier (if blank does not belong to a mobile carrier)
 name|string|Long name of mobile carrier
+
+
+## LRNNumberInfo
+Property|Type|Description
+-----|-----|-----
+CarrierName|string|Long name of phone number carrier
+CarrierType|string|Indicates type of carrier for phone number (e.g. WIRELESS, MVNO, etc)
+ErrorMessage|string|`null` if no error.  Contains any errors that may have occurred on lookup
+LATA|integer|Local access and transport area - Geographical area
+OCN|string|Original network ID
+PhoneNumber|string|Full phone number including international calling code
+RateCenter|string|Regional rate center
+SwitchName|string|Switch name (regional information)
 
 
 # Authentication
