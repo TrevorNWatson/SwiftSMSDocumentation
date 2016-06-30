@@ -4661,3 +4661,10 @@ PhoneNumber|string|Full phone number including international calling code
 RateCenter|string|Regional rate center
 SwitchName|string|Switch name (regional information)
 
+
+# International Number Formatting
+
+Once your account has been authorized for sending outside of North America, you can text anywhere in the world. Our service expects to be passed international phone numbers (in the CellNumber parameter) as digits only, starting with the country code followed by the complete telephone number. Do not include a leading "011" or "+".
+
+So for example, to text Australia (country code 61) your number should look like: 61455553333 
+Kenya (country code 254) would look like: 254755444333
