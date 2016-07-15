@@ -18,7 +18,7 @@ search: true
 Welcome to the Swift SMS Gateway API! You can use our API to easily send SMS messages anywhere in the world.
 
 
-To use the Swift SMS Gateway API, please sign up for an account at [http://smsgateway.ca](http://smsgateway.ca)
+To use the Swift SMS Gateway API, please sign up for a [free account here](https://secure.smsgateway.ca/ns/Users/SwiftSignup.aspx)
 
 ## Endpoints
 To use Swift SMS Gateway via our web services, you must point to the appropriate endpoint.
